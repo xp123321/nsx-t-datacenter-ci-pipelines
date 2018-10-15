@@ -92,7 +92,7 @@ done
 # If proxy env vars not set, remove the settings
 proxy_patterns=("HTTP_PROXY" "HTTPS_PROXY" "NO_PROXY")
 if [[ -z "$HTTP_PROXY" ]] || [[ -z "HTTPS_PROXY" ]]; then
-	for p in in "${proxy_patterns[@]}"; do
+	for p in "${proxy_patterns[@]}"; do
 		sed -i "/$p/d" docker-compose.yml
 	done
 else
