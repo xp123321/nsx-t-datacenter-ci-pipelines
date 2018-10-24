@@ -84,21 +84,26 @@ sed -i "0,/^ *- CONCOURSE_NO_REALLY_I_DONT_WANT_ANY_AUTH/ s|CONCOURSE_NO_REALLY_
 sed  -i "/^ *image: concourse\/concourse/ s|concourse/concourse.*$|concourse/concourse:$concourse_version|g" docker-compose.yml
 
 # remove lines containing following parameters
-patterns=("CONCOURSE_BASIC_AUTH_USERNAME" "CONCOURSE_BASIC_AUTH_PASSWORD" "http_proxy_url" "https_proxy_url" "no_proxy")
+patterns=("CONCOURSE_BASIC_AUTH_USERNAME" "CONCOURSE_BASIC_AUTH_PASSWORD")
 for p in "${patterns[@]}"; do
         sed -i "/$p/d" docker-compose.yml
 done
 
 # If proxy env vars not set, remove the settings
-proxy_patterns=("HTTP_PROXY" "HTTPS_PROXY" "NO_PROXY")
+proxy_patterns=("http_proxy_url" "https_proxy_url" "no_proxy" "HTTP_PROXY" "HTTPS_PROXY" "NO_PROXY")
 if [[ -z "$HTTP_PROXY" ]] || [[ -z "HTTPS_PROXY" ]]; then
 	for p in "${proxy_patterns[@]}"; do
 		sed -i "/$p/d" docker-compose.yml
 	done
 else
 	sed -i "0,/^ *- HTTP_PROXY/ s|HTTP_PROXY.*$|HTTP_PROXY=${HTTP_PROXY}|" docker-compose.yml
+	sed -i "0,/^ *- http_proxy_url/ s|http_proxy_url.*$|http_proxy_url=${HTTP_PROXY}|" docker-compose.yml
+
 	sed -i "0,/^ *- HTTPS_PROXY/ s|HTTPS_PROXY.*$|HTTPS_PROXY=${HTTPS_PROXY}|" docker-compose.yml
+	sed -i "0,/^ *- https_proxy_url/ s|https_proxy_url.*$|https_proxy_url=${HTTPS_PROXY}|" docker-compose.yml
+
 	sed -i "0,/^ *- NO_PROXY/ s|NO_PROXY.*$|NO_PROXY=${NO_PROXY}|" docker-compose.yml
+	sed -i "0,/^ *- no_proxy/ s|no_proxy.*$|no_proxy=${NO_PROXY}|" docker-compose.yml
 fi
 
 #sed -i "0,/^ *- CONCOURSE_GARDEN_NETWORK/ s|- CONCOURSE_GARDEN_NETWORK.*$|#- CONCOURSE_GARDEN_NETWORK|" docker-compose.yml
